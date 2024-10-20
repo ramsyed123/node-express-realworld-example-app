@@ -1,0 +1,52 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install backend dependencies
+        run: |
+          cd node-express-realworld-example-app
+          npm install
+
+      - name: Run backend tests
+        run: |
+          cd node-express-realworld-example-app
+          npm test
+
+      - name: Install frontend dependencies
+        run: |
+          cd react-redux-realworld-example-app
+          npm install
+
+      - name: Run frontend tests
+        run: |
+          cd react-redux-realworld-example-app
+          npm test
+
+      - name: Build the frontend
+        run: |
+          cd react-redux-realworld-example-app
+          npm run build
+
+      - name: Save frontend artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-artifact
+          path: react-redux-realworld-example-app/build
